@@ -6,10 +6,21 @@ body {
 }
 
 header {
-    background-color: #333;
+    background-color: #4CAF50; /* Change to a more vibrant green */
     color: white;
     padding: 20px;
     text-align: center;
+    position: relative;
+}
+
+header .profile-photo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    position: absolute;
+    top: 10px;
+    left: calc(50% - 75px); /* Center the image horizontally */
+    border: 5px solid white; /* Add a border to the profile photo */
 }
 
 section {
