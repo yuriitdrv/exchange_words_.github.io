@@ -103,6 +103,22 @@ storyContainer.innerHTML += `
             <button type="button" class="button add-comment">Добавить комментарий</button>
         </form>
     </div>
+storyContainer.querySelector('.add-comment').addEventListener('click', function() {
+    const commentAuthor = storyContainer.querySelector('.comment-author').value;
+    const commentContent = storyContainer.querySelector('.comment-content').value;
+
+    if (commentAuthor && commentContent) {
+        // Вставляем комментарий в блок .comment-list
+        const commentList = storyContainer.querySelector('.comment-list');
+        const comment = document.createElement('div');
+        comment.classList.add('comment');
+        comment.innerHTML = `<p><strong>${commentAuthor}</strong>: ${commentContent}</p>`;
+        commentList.appendChild(comment);
+
+        // Очищаем форму
+        storyContainer.querySelector('.comment-form').reset();
+    }
+});
 `;
 </div>
         <div class="story">
