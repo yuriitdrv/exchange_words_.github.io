@@ -92,6 +92,18 @@
         <textarea id="storyContent" placeholder="Содержание рассказа" required></textarea><br>
         <button type="submit" class="button">Добавить рассказ</button>
     </form>
+    // Вставляем блок комментариев
+storyContainer.innerHTML += `
+    <div class="comments">
+        <h3>Комментарии</h3>
+        <div class="comment-list"></div>
+        <form class="comment-form">
+            <input type="text" placeholder="Ваше имя" class="comment-author" required>
+            <textarea placeholder="Ваш комментарий" class="comment-content" required></textarea>
+            <button type="button" class="button add-comment">Добавить комментарий</button>
+        </form>
+    </div>
+`;
 </div>
         <div class="story">
             <h2>Пример рассказа</h2>
