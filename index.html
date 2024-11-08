@@ -131,26 +131,46 @@
     </div>
 
     <script>
-        // Обработчик отправки формы для добавления нового рассказа
-        document.getElementById('storyForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Отменяем стандартное поведение формы
+    // Функция для добавления нового рассказа в Firestore
+    document.getElementById('storyForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
 
-            // Получаем данные из формы
-            const title = document.getElementById('storyTitle').value;
-            const author = document.getElementById('storyAuthor').value;
-            const content = document.getElementById('storyContent').value;
+        const title = document.getElementById('storyTitle').value;
+        const author = document.getElementById('storyAuthor').value;
+        const content = document.getElementById('storyContent').value;
 
-            // Создаем новый элемент рассказа
+        // Добавляем рассказ в коллекцию Firestore
+        await db.collection('stories').add({
+            title: title,
+            author: author,
+            content: content,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // Очищаем форму
+        document.getElementById('storyForm').reset();
+    });
+
+    // Функция для загрузки рассказов с Firestore
+    async function loadStories() {
+        const storiesContainer = document.getElementById('stories');
+        const querySnapshot = await db.collection('stories').orderBy('createdAt', 'desc').get();
+
+        querySnapshot.forEach((doc) => {
+            const storyData = doc.data();
+            const storyId = doc.id;
+
+            // Создаем элемент рассказа
             const storyContainer = document.createElement('div');
             storyContainer.classList.add('story');
             storyContainer.innerHTML = `
-                <h2>${title}</h2>
-                <p class="author">Автор: ${author}</p>
-                <p>${content}</p>
-                <div class="comments">
+                <h2>${storyData.title}</h2>
+                <p class="author">Автор: ${storyData.author}</p>
+                <p>${storyData.content}</p>
+                <div class="comments" id="comments-${storyId}">
                     <h3>Комментарии</h3>
                     <div class="comment-list"></div>
-                    <form class="comment-form">
+                    <form class="comment-form" data-story-id="${storyId}">
                         <input type="text" placeholder="Ваше имя" class="comment-author" required>
                         <textarea placeholder="Ваш комментарий" class="comment-content" required></textarea>
                         <button type="button" class="button add-comment">Добавить комментарий</button>
@@ -158,30 +178,57 @@
                 </div>
             `;
 
-            // Добавляем обработчик для добавления комментариев к этому рассказу
-            storyContainer.querySelector('.add-comment').addEventListener('click', function() {
-                const commentAuthor = storyContainer.querySelector('.comment-author').value;
-                const commentContent = storyContainer.querySelector('.comment-content').value;
-
-                if (commentAuthor && commentContent) {
-                    // Вставляем комментарий в блок .comment-list
-                    const commentList = storyContainer.querySelector('.comment-list');
-                    const comment = document.createElement('div');
-                    comment.classList.add('comment');
-                    comment.innerHTML = `<p><strong>${commentAuthor}</strong>: ${commentContent}</p>`;
-                    commentList.appendChild(comment);
-
-                    // Очищаем форму
-                    storyContainer.querySelector('.comment-form').reset();
-                }
+            // Добавляем обработчик комментариев
+            storyContainer.querySelector('.add-comment').addEventListener('click', function(event) {
+                addComment(storyId, storyContainer);
             });
 
-            // Вставляем новый рассказ в начало списка рассказов
-            document.getElementById('stories').prepend(storyContainer);
-
-            // Очищаем форму
-            document.getElementById('storyForm').reset();
+            // Добавляем рассказ на страницу
+            storiesContainer.appendChild(storyContainer);
         });
-    </script>
+    }
+
+    // Функция для добавления комментария в Firestore
+    async function addComment(storyId, storyContainer) {
+        const commentAuthor = storyContainer.querySelector('.comment-author').value;
+        const commentContent = storyContainer.querySelector('.comment-content').value;
+
+        if (commentAuthor && commentContent) {
+            await db.collection('comments').add({
+                storyId: storyId,
+                author: commentAuthor,
+                content: commentContent,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            // Обновляем комментарии на странице
+            loadComments(storyId, storyContainer.querySelector('.comment-list'));
+
+            // Очищаем форму комментариев
+            storyContainer.querySelector('.comment-form').reset();
+        }
+    }
+
+    // Функция для загрузки комментариев для каждого рассказа
+    async function loadComments(storyId, commentListContainer) {
+        const querySnapshot = await db.collection('comments')
+            .where('storyId', '==', storyId)
+            .orderBy('createdAt', 'asc')
+            .get();
+
+        commentListContainer.innerHTML = ''; // Очистка списка комментариев
+        querySnapshot.forEach((doc) => {
+            const commentData = doc.data();
+            const comment = document.createElement('div');
+            comment.classList.add('comment');
+            comment.innerHTML = `<p><strong>${commentData.author}</strong>: ${commentData.content}</p>`;
+            commentListContainer.appendChild(comment);
+        });
+    }
+
+    // Загрузка всех рассказов при загрузке страницы
+    loadStories();
+</script>
+
 </body>
 </html>
