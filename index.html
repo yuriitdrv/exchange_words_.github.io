@@ -5,6 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Социальная сеть для писателей</title>
     <style>
+        <script>
+    // Функция для обработки отправки формы
+    document.getElementById('storyForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Отменяем стандартное поведение формы
+
+        // Получаем данные из формы
+        const title = document.getElementById('storyTitle').value;
+        const author = document.getElementById('storyAuthor').value;
+        const content = document.getElementById('storyContent').value;
+
+        // Вставляем историю на страницу
+        const storyContainer = document.createElement('div');
+        storyContainer.classList.add('story');
+        storyContainer.innerHTML = `
+            <h2>${title}</h2>
+            <p class="author">Автор: ${author}</p>
+            <p>${content}</p>
+        `;
+
+        // Добавляем новую историю в начало контейнера
+        document.querySelector('.container').insertBefore(storyContainer, document.querySelector('.add-story').nextSibling);
+
+        // Очищаем форму
+        document.getElementById('storyForm').reset();
+    });
+</script>
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f7f7f7;
