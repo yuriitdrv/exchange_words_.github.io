@@ -1,6 +1,29 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyBfnQfDL5i0IZHBwHsaGrZPztVPxM8fJ50",
+    authDomain: "my-awesome-project-ewords.firebaseapp.com",
+    projectId: "my-awesome-project-ewords",
+    storageBucket: "my-awesome-project-ewords.firebasestorage.app",
+    messagingSenderId: "286606474808",
+    appId: "1:286606474808:web:31e51b6221e3a740eef0cd",
+    measurementId: "G-0BCGVZ5WHX"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Социальная сеть для писателей</title>
